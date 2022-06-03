@@ -55,8 +55,10 @@ After having analyzed the data source, let's start sketching our plugin. We deci
 
 ## Implementing the plugin
 
-Let's get started implementing the plugin. The most important part in the beginning is the structure. A good practice is to create a folder for all the views and one file for storing all the elements' IDs. Moreover, we create our `plugin.py` file.
+### Initial setup
+
+Let's get started implementing the plugin. The most important part in the beginning is the structure. A good practice is to create a folder for all the views and one file for storing all the elements' IDs. In addition, we create our `_plugin.py` and `__init__.py`s file (one inside the main and one in the `views` folder).
 
 ![Plugin views](./assets/initial-setup.png)
 
-###
+### Plugin file
