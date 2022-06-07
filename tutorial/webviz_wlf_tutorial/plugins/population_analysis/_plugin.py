@@ -7,6 +7,7 @@ from dash.development.base_component import Component
 
 from ._element_ids import ElementIds
 from ._error import error
+from .shared_settings import CountrySelection
 from .views import BirthIndicators, MortalityDeathRates, PopulationByAges, PopulationIndicators
 
 class PopulationAnalysis(WebvizPluginABC):
@@ -62,8 +63,12 @@ class PopulationAnalysis(WebvizPluginABC):
             self.error_message = f"Unknown exception when trying to read '{path_to_population_data_csv_file}'."
             return
 
-        self.add_view(BirthIndicators(self.population_df, ElementIds.BirthDeathFertility.BirthIndicators.ID, ElementIds.BirthDeathFertility.NAME))
-        self.add_view(MortalityDeathRates(self.population_df, ElementIds.BirthDeathFertility.MortalityDeathRates.ID, ElementIds.BirthDeathFertility.NAME))
+        self.add_store(ElementIds.Stores.SELECTED_COUNTRIES, WebvizPluginABC.StorageType.SESSION)
+
+        self.add_shared_settings_group(CountrySelection(self.population_df), ElementIds.SharedSettings.CountrySelection.ID)
+
+        self.add_view(BirthIndicators(self.population_df), ElementIds.BirthDeathFertility.BirthIndicators.ID, ElementIds.BirthDeathFertility.NAME)
+        self.add_view(MortalityDeathRates(self.population_df), ElementIds.BirthDeathFertility.MortalityDeathRates.ID, ElementIds.BirthDeathFertility.NAME)
 
         self.add_view(PopulationByAges(self.population_df), ElementIds.Population.ByAges.ID, ElementIds.Population.NAME)
         self.add_view(PopulationIndicators(self.population_df), ElementIds.Population.Indicators.ID, ElementIds.Population.NAME)

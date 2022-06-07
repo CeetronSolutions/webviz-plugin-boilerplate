@@ -35,7 +35,7 @@ Since we don't want to blow up our plugin too much (and not all indicators come 
     -   Birth indicators
         -   Birth and fertility rates
         -   Life expectancy at birth (male/female/total)
-        -   Sex ratio at birth (male births per female
+        -   Sex ratio at birth (male births per female birth)
     -   Mortality and death rates
 -   Population
     -   Population by ages
@@ -343,9 +343,13 @@ In the console, we should see an excerpt of the Pandas dataframe with the popula
 
 ![Output of dataframe](./assets/dataframe-output.png)
 
+... and whats happens if e.g. the our CSV data file cannot be found? If we slightly change the path to the file, we get the following output:
+
+![File not found error](./assets/error-message.png)
+
 Awesome, now we know that the data is correctly read and that our plugin is working... so far.
 
-Let's continue with the implementation of our plugin. As a reminder, we want to implement 2 view groups with two views each:
+Let's continue with the implementation of our plugin. As a reminder, we want to implement two view groups with two views each:
 
 -   Birth, death, fertility and life expectancy
     -   Birth indicators
@@ -387,8 +391,8 @@ Now we can add the views to our plugin's `__init__` method:
 
 ```python
         ...
-        self.add_view(BirthIndicators(self.population_df, ElementIds.BirthDeathFertility.BirthIndicators.ID, ElementIds.BirthDeathFertility.NAME))
-        self.add_view(MortalityDeathRates(self.population_df, ElementIds.BirthDeathFertility.MortalityDeathRates.ID, ElementIds.BirthDeathFertility.NAME))
+        self.add_view(BirthIndicators(self.population_df), ElementIds.BirthDeathFertility.BirthIndicators.ID, ElementIds.BirthDeathFertility.NAME)
+        self.add_view(MortalityDeathRates(self.population_df), ElementIds.BirthDeathFertility.MortalityDeathRates.ID, ElementIds.BirthDeathFertility.NAME)
 
         self.add_view(PopulationByAges(self.population_df), ElementIds.Population.ByAges.ID, ElementIds.Population.NAME)
         self.add_view(PopulationIndicators(self.population_df), ElementIds.Population.Indicators.ID, ElementIds.Population.NAME)
@@ -428,4 +432,12 @@ class ElementIds:
             ID = "indicators"
 ```
 
-Why are we using `ElementIds`? Of course, we could also use strings directly as IDs. However, in order to guarantee consistency and to make it easier to implement changes to names, a class structure like this is beneficial.
+Why are we using `ElementIds`? Of course, we could also use strings directly as IDs. However, in order to guarantee consistency and to make it easier to implement changes to names, a class structure like this is beneficial. We are going to extend this file for each ID we are going to need in our plugin.
+
+Having the our views implemented, let's have a look how our plugin looks like.
+
+![Views implemented](./assets/first-views.png)
+
+That does already look promising. In the next sections we are going to implement our views.
+
+### Birth indicators view
