@@ -6,16 +6,14 @@ with open("README.md", "r") as fh:
 TESTS_REQUIRE = ["selenium~=3.141", "pylint", "mock", "black", "bandit"]
 
 setup(
-    name="webviz_plugin_boilerplate",
-    description="Webviz plugin boilerplate with example plugins",
+    name="webviz_wlf_tutorial",
+    description="Webviz Layout Framework Tutorial",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     packages=find_packages(exclude=["tests"]),
     entry_points={
         "webviz_config_plugins": [
-            "SomeCustomPlugin = webviz_plugin_boilerplate.plugins:SomeCustomPlugin",
-            "SomeOtherCustomPlugin = webviz_plugin_boilerplate.plugins:SomeOtherCustomPlugin",
-            "BestPracticePlugin = webviz_plugin_boilerplate.plugins:BestPracticePlugin",
+            "PopulationAnalysis = webviz_wlf_tutorial.plugins:PopulationAnalysis",
         ]
     },
     install_requires=[
@@ -23,8 +21,9 @@ setup(
     ],
     tests_require=TESTS_REQUIRE,
     extras_require={"tests": TESTS_REQUIRE},
+    setup_requires=["setuptools_scm~=3.2"],
     python_requires="~=3.6",
-    use_scm_version=True,
+    use_scm_version=False,
     zip_safe=False,
     classifiers=[
         "Natural Language :: English",

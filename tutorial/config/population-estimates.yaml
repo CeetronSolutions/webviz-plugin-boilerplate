@@ -1,0 +1,8 @@
+title: World Population Analysis
+
+layout:
+  - page: World Population Analysis
+    icon: world
+    content:
+      - PopulationAnalysis:
+          path_to_population_data_csv_file: ./data/population-estimates.csv

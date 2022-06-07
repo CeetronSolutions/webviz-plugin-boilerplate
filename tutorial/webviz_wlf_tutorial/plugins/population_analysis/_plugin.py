@@ -1,4 +1,3 @@
-
 from typing import Optional, Type, Union
 from pathlib import Path
 
@@ -6,7 +5,9 @@ import pandas as pd
 from webviz_config import WebvizPluginABC
 from dash.development.base_component import Component
 
+from ._element_ids import ElementIds
 from ._error import error
+from .views import BirthIndicators, MortalityDeathRates, PopulationByAges, PopulationIndicators
 
 class PopulationAnalysis(WebvizPluginABC):
     """
@@ -39,27 +40,37 @@ class PopulationAnalysis(WebvizPluginABC):
     def __init__(self, path_to_population_data_csv_file: Path) -> None:
         super().__init__()
 
-        self.error_message: Optional[str] = None
+        self.error_message = ""
 
         try:
-            self.population_data = pd.read_csv(path_to_population_data_csv_file)
+            self.population_df = pd.read_csv(path_to_population_data_csv_file)
         except PermissionError:
-            self.error_message = f"Access to fil '{path_to_population_data_csv_file}' denied."
+            self.error_message = f"Access to file '{path_to_population_data_csv_file}' denied."
             "Please check your path for 'path_to_population_data_csv_file' and make sure your application has permission to access it."
+            return
         except FileNotFoundError:
             self.error_message = f"File '{path_to_population_data_csv_file}' not found."
             "Please check your path for 'path_to_population_data_csv_file'."
+            return
         except pd.errors.ParserError:
             self.error_message = f"File '{path_to_population_data_csv_file}' is not a valid CSV file."
+            return
         except pd.errors.EmptyDataError:
             self.error_message = f"File '{path_to_population_data_csv_file}' is an empty file."
+            return
         except Exception:
             self.error_message = f"Unknown exception when trying to read '{path_to_population_data_csv_file}'."
+            return
+
+        self.add_view(BirthIndicators(self.population_df, ElementIds.BirthDeathFertility.BirthIndicators.ID, ElementIds.BirthDeathFertility.NAME))
+        self.add_view(MortalityDeathRates(self.population_df, ElementIds.BirthDeathFertility.MortalityDeathRates.ID, ElementIds.BirthDeathFertility.NAME))
+
+        self.add_view(PopulationByAges(self.population_df), ElementIds.Population.ByAges.ID, ElementIds.Population.NAME)
+        self.add_view(PopulationIndicators(self.population_df), ElementIds.Population.Indicators.ID, ElementIds.Population.NAME)
+
 
     @property
     def layout(self) -> Union[str, Type[Component]]:
-        if self.error_message:
-            return error(self.error_message)
-        return super().layout
+        return error(self.error_message)
 
 
