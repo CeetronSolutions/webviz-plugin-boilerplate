@@ -8,7 +8,13 @@ from dash.development.base_component import Component
 from ._element_ids import ElementIds
 from ._error import error
 from .shared_settings import CountrySelection
-from .views import BirthIndicators, MortalityDeathRates, PopulationByAges, PopulationIndicators
+from .views import (
+    BirthIndicators,
+    MortalityRatesAndNumberOfDeaths,
+    PopulationByAges,
+    PopulationIndicators,
+)
+
 
 class PopulationAnalysis(WebvizPluginABC):
     """
@@ -16,7 +22,7 @@ class PopulationAnalysis(WebvizPluginABC):
     Step by step, it is created in the respective tutorial: MISSING LINK.
 
     `Plugin functionality`:
-    This plugin imports population data from the World Bank's 2022 `Population Estimates And Projections` 
+    This plugin imports population data from the World Bank's 2022 `Population Estimates And Projections`
     data collection (https://datacatalog.worldbank.org/search/dataset/0037655/Population-Estimates-and-Projections)
     as a CSV file.
     It provides two view groups with two views each on the data:
@@ -46,7 +52,9 @@ class PopulationAnalysis(WebvizPluginABC):
         try:
             self.population_df = pd.read_csv(path_to_population_data_csv_file)
         except PermissionError:
-            self.error_message = f"Access to file '{path_to_population_data_csv_file}' denied."
+            self.error_message = (
+                f"Access to file '{path_to_population_data_csv_file}' denied."
+            )
             "Please check your path for 'path_to_population_data_csv_file' and make sure your application has permission to access it."
             return
         except FileNotFoundError:
@@ -54,28 +62,50 @@ class PopulationAnalysis(WebvizPluginABC):
             "Please check your path for 'path_to_population_data_csv_file'."
             return
         except pd.errors.ParserError:
-            self.error_message = f"File '{path_to_population_data_csv_file}' is not a valid CSV file."
+            self.error_message = (
+                f"File '{path_to_population_data_csv_file}' is not a valid CSV file."
+            )
             return
         except pd.errors.EmptyDataError:
-            self.error_message = f"File '{path_to_population_data_csv_file}' is an empty file."
+            self.error_message = (
+                f"File '{path_to_population_data_csv_file}' is an empty file."
+            )
             return
         except Exception:
             self.error_message = f"Unknown exception when trying to read '{path_to_population_data_csv_file}'."
             return
 
-        self.add_store(ElementIds.Stores.SELECTED_COUNTRIES, WebvizPluginABC.StorageType.SESSION)
+        self.add_store(
+            ElementIds.Stores.SELECTED_COUNTRIES, WebvizPluginABC.StorageType.SESSION
+        )
 
-        self.add_shared_settings_group(CountrySelection(self.population_df), ElementIds.SharedSettings.CountrySelection.ID)
+        self.add_shared_settings_group(
+            CountrySelection(self.population_df),
+            ElementIds.SharedSettings.CountrySelection.ID,
+        )
 
-        self.add_view(BirthIndicators(self.population_df), ElementIds.BirthDeathFertility.BirthIndicators.ID, ElementIds.BirthDeathFertility.NAME)
-        self.add_view(MortalityDeathRates(self.population_df), ElementIds.BirthDeathFertility.MortalityDeathRates.ID, ElementIds.BirthDeathFertility.NAME)
+        self.add_view(
+            BirthIndicators(self.population_df),
+            ElementIds.BirthDeathFertility.BirthIndicators.ID,
+            ElementIds.BirthDeathFertility.NAME,
+        )
+        self.add_view(
+            MortalityRatesAndNumberOfDeaths(self.population_df),
+            ElementIds.BirthDeathFertility.MortalityRatesAndNumberOfDeaths.ID,
+            ElementIds.BirthDeathFertility.NAME,
+        )
 
-        self.add_view(PopulationByAges(self.population_df), ElementIds.Population.ByAges.ID, ElementIds.Population.NAME)
-        self.add_view(PopulationIndicators(self.population_df), ElementIds.Population.Indicators.ID, ElementIds.Population.NAME)
-
+        self.add_view(
+            PopulationByAges(self.population_df),
+            ElementIds.Population.ByAges.ID,
+            ElementIds.Population.NAME,
+        )
+        self.add_view(
+            PopulationIndicators(self.population_df),
+            ElementIds.Population.Indicators.ID,
+            ElementIds.Population.NAME,
+        )
 
     @property
     def layout(self) -> Union[str, Type[Component]]:
         return error(self.error_message)
-
-
