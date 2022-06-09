@@ -1,4 +1,4 @@
-from typing import Tuple, Type, Union
+from typing import List, Tuple, Type, Union
 
 from dash import callback, Input, Output
 from dash.development.base_component import Component
@@ -123,8 +123,11 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
             Input(
                 self.get_store_unique_id(ElementIds.Stores.SELECTED_COUNTRIES), "data"
             ),
+            Input(self.get_store_unique_id(ElementIds.Stores.SELECTED_YEARS), "data"),
         )
-        def _update_plots(countries: list) -> Tuple[dict, dict, dict, dict, dict]:
+        def _update_plots(
+            countries: List[str], years: List[int]
+        ) -> Tuple[dict, dict, dict, dict, dict]:
             death_rates = {
                 "data": [
                     {
@@ -146,7 +149,10 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
                     }
                     for x in countries
                 ],
-                "layout": {"title": "Death rate, crude (per 1,000 people)"},
+                "layout": {
+                    "title": "Death rate, crude (per 1,000 people)",
+                    "xaxis": {"range": years},
+                },
             }
 
             colors = plotly.colors.DEFAULT_PLOTLY_COLORS
@@ -203,7 +209,8 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
                     for i, x in enumerate(countries)
                 ],
                 "layout": {
-                    "title": "Mortality rate, adult (per 1,000 people of respective sex)"
+                    "title": "Mortality rate, adult (per 1,000 people of respective sex)",
+                    "xaxis": {"range": years},
                 },
             }
 
@@ -283,7 +290,10 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
                     }
                     for i, x in enumerate(countries)
                 ],
-                "layout": {"title": "Mortality rate, infant (per 1,000 live births)"},
+                "layout": {
+                    "title": "Mortality rate, infant (per 1,000 live births)",
+                    "xaxis": {"range": years},
+                },
             }
 
             mortality_rates_neonatal = {
@@ -307,7 +317,10 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
                     }
                     for i, x in enumerate(countries)
                 ],
-                "layout": {"title": "Mortality rate, neonatal (per 1,000 live births)"},
+                "layout": {
+                    "title": "Mortality rate, neonatal (per 1,000 live births)",
+                    "xaxis": {"range": years},
+                },
             }
 
             mortality_rates_under_five = {
@@ -395,7 +408,10 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
                     }
                     for i, x in enumerate(countries)
                 ],
-                "layout": {"title": "Mortality rate, infant (per 1,000 live births)"},
+                "layout": {
+                    "title": "Mortality rate, infant (per 1,000 live births)",
+                    "xaxis": {"range": years},
+                },
             }
 
             return (

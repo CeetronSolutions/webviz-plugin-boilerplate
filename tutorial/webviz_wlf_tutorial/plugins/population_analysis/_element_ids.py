@@ -1,11 +1,11 @@
 class ElementIds:
     class Stores:
         SELECTED_COUNTRIES = "selected-countries"
+        SELECTED_YEARS = "selected-years"
 
     class SharedSettings:
-        class CountrySelection:
-            ID = "country-selection"
-            SELECTOR_COMPONENT = "selector"
+        class Filter:
+            ID = "filter"
 
     GRAPH = "graph"
 
@@ -36,6 +36,9 @@ class ElementIds:
 
         class ByAges:
             ID = "by-ages"
+
+            MAIN_COLUMN = "main-column"
+            SETTINGS = "settings"
 
         class Indicators:
             ID = "indicators"

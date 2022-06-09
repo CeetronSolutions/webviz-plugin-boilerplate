@@ -104,8 +104,11 @@ class BirthIndicators(ViewABC):
             Input(
                 self.get_store_unique_id(ElementIds.Stores.SELECTED_COUNTRIES), "data"
             ),
+            Input(self.get_store_unique_id(ElementIds.Stores.SELECTED_YEARS), "data"),
         )
-        def _update_plots(countries: list) -> Tuple[dict, dict, dict, dict]:
+        def _update_plots(
+            countries: List[str], years: List[int]
+        ) -> Tuple[dict, dict, dict, dict]:
             birth_rates = {
                 "data": [
                     {
@@ -127,7 +130,10 @@ class BirthIndicators(ViewABC):
                     }
                     for x in countries
                 ],
-                "layout": {"title": "Birth rate, crude (per 1,000 people)"},
+                "layout": {
+                    "title": "Birth rate, crude (per 1,000 people)",
+                    "xaxis": {"range": years},
+                },
             }
 
             fertility_rates = {
@@ -151,7 +157,10 @@ class BirthIndicators(ViewABC):
                     }
                     for x in countries
                 ],
-                "layout": {"title": "Fertility rate, total (births per woman)"},
+                "layout": {
+                    "title": "Fertility rate, total (births per woman)",
+                    "xaxis": {"range": years},
+                },
             }
 
             colors = plotly.colors.DEFAULT_PLOTLY_COLORS
@@ -231,7 +240,10 @@ class BirthIndicators(ViewABC):
                     }
                     for i, x in enumerate(countries)
                 ],
-                "layout": {"title": "Life expectancy at birth (years)"},
+                "layout": {
+                    "title": "Life expectancy at birth (years)",
+                    "xaxis": {"range": years},
+                },
             }
 
             sex_ratio = {
@@ -256,7 +268,8 @@ class BirthIndicators(ViewABC):
                     for x in countries
                 ],
                 "layout": {
-                    "title": "Sex ratio at birth (male births per female births)"
+                    "title": "Sex ratio at birth (male births per female births)",
+                    "xaxis": {"range": years},
                 },
             }
 

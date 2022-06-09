@@ -7,7 +7,7 @@ from dash.development.base_component import Component
 
 from ._element_ids import ElementIds
 from ._error import error
-from .shared_settings import CountrySelection
+from .shared_settings import Filter
 from .views import (
     BirthIndicators,
     MortalityRatesAndNumberOfDeaths,
@@ -79,9 +79,13 @@ class PopulationAnalysis(WebvizPluginABC):
             ElementIds.Stores.SELECTED_COUNTRIES, WebvizPluginABC.StorageType.SESSION
         )
 
+        self.add_store(
+            ElementIds.Stores.SELECTED_YEARS, WebvizPluginABC.StorageType.SESSION
+        )
+
         self.add_shared_settings_group(
-            CountrySelection(self.population_df),
-            ElementIds.SharedSettings.CountrySelection.ID,
+            Filter(self.population_df),
+            ElementIds.SharedSettings.Filter.ID,
         )
 
         self.add_view(
