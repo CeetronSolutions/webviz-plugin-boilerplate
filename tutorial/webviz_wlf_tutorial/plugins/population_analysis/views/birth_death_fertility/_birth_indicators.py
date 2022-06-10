@@ -1,34 +1,25 @@
-from typing import List, Tuple, Type, Union
+from typing import List, Tuple
 
-from dash import callback, Input, Output, State
-from dash.development.base_component import Component
+from dash import callback, Input, Output
 import pandas as pd
-import plotly.graph_objects as go
-import plotly.express as px
 import plotly.colors
 from webviz_config.webviz_plugin_subclasses import (
     ViewABC,
-    ViewElementABC,
-    SettingsGroupABC,
 )
-import webviz_core_components as wcc
 
-from ..._element_ids import ElementIds
-
-
-class Graph(ViewElementABC):
-    def __init__(self) -> None:
-        super().__init__()
-
-    def inner_layout(self) -> Union[str, Type[Component]]:
-        return wcc.Graph(
-            id=self.register_component_unique_id(ElementIds.GRAPH),
-            config={"displayModeBar": True, "topojsonUrl": "localhost"},
-            style={"height": "43vh", "min-height": "300px"},
-        )
+from ..._plugin_ids import PluginIds
+from ...view_elements import Graph
 
 
 class BirthIndicators(ViewABC):
+    class Ids:
+        BIRTH_RATES = "birth-rates"
+        FERTILITY_RATES = "fertility-rates"
+        LIFE_EXPECTANCY = "life-expectancy"
+        SEX_RATIO = "sex-ratio"
+        SETTINGS = "settings"
+        CHART_TYPE = "chart-type"
+
     def __init__(self, population_df: pd.DataFrame) -> None:
         super().__init__("Birth indicators")
 
@@ -52,59 +43,43 @@ class BirthIndicators(ViewABC):
         column = self.add_column()
 
         first_row = column.make_row()
-        first_row.add_view_element(
-            Graph(), ElementIds.BirthDeathFertility.BirthIndicators.BIRTH_RATES
-        )
-        first_row.add_view_element(
-            Graph(), ElementIds.BirthDeathFertility.BirthIndicators.FERTILITY_RATES
-        )
+        first_row.add_view_element(Graph("43vh"), BirthIndicators.Ids.BIRTH_RATES)
+        first_row.add_view_element(Graph("43vh"), BirthIndicators.Ids.FERTILITY_RATES)
 
         second_row = column.make_row()
-        second_row.add_view_element(
-            Graph(), ElementIds.BirthDeathFertility.BirthIndicators.LIFE_EXPECTANCY
-        )
-        second_row.add_view_element(
-            Graph(), ElementIds.BirthDeathFertility.BirthIndicators.SEX_RATIO
-        )
+        second_row.add_view_element(Graph("43vh"), BirthIndicators.Ids.LIFE_EXPECTANCY)
+        second_row.add_view_element(Graph("43vh"), BirthIndicators.Ids.SEX_RATIO)
 
     def set_callbacks(self) -> None:
         @callback(
             Output(
-                self.view_element(
-                    ElementIds.BirthDeathFertility.BirthIndicators.BIRTH_RATES
-                )
-                .component_unique_id(ElementIds.GRAPH)
+                self.view_element(BirthIndicators.Ids.BIRTH_RATES)
+                .component_unique_id(Graph.Ids.GRAPH)
                 .to_string(),
                 "figure",
             ),
             Output(
-                self.view_element(
-                    ElementIds.BirthDeathFertility.BirthIndicators.FERTILITY_RATES
-                )
-                .component_unique_id(ElementIds.GRAPH)
+                self.view_element(BirthIndicators.Ids.FERTILITY_RATES)
+                .component_unique_id(Graph.Ids.GRAPH)
                 .to_string(),
                 "figure",
             ),
             Output(
-                self.view_element(
-                    ElementIds.BirthDeathFertility.BirthIndicators.LIFE_EXPECTANCY
-                )
-                .component_unique_id(ElementIds.GRAPH)
+                self.view_element(BirthIndicators.Ids.LIFE_EXPECTANCY)
+                .component_unique_id(Graph.Ids.GRAPH)
                 .to_string(),
                 "figure",
             ),
             Output(
-                self.view_element(
-                    ElementIds.BirthDeathFertility.BirthIndicators.SEX_RATIO
-                )
-                .component_unique_id(ElementIds.GRAPH)
+                self.view_element(BirthIndicators.Ids.SEX_RATIO)
+                .component_unique_id(Graph.Ids.GRAPH)
                 .to_string(),
                 "figure",
             ),
             Input(
-                self.get_store_unique_id(ElementIds.Stores.SELECTED_COUNTRIES), "data"
+                self.get_store_unique_id(PluginIds.Stores.SELECTED_COUNTRIES), "data"
             ),
-            Input(self.get_store_unique_id(ElementIds.Stores.SELECTED_YEARS), "data"),
+            Input(self.get_store_unique_id(PluginIds.Stores.SELECTED_YEARS), "data"),
         )
         def _update_plots(
             countries: List[str], years: List[int]
@@ -113,9 +88,11 @@ class BirthIndicators(ViewABC):
                 "data": [
                     {
                         "x": list(
-                            self.df_birth_rates.dropna(
-                                axis="columns", how="all"
-                            ).columns[4:]
+                            self.df_birth_rates.loc[
+                                self.df_birth_rates["Country Name"] == x
+                            ]
+                            .dropna(axis="columns", how="all")
+                            .columns[4:]
                         ),
                         "y": list(
                             self.df_birth_rates.loc[
@@ -140,9 +117,11 @@ class BirthIndicators(ViewABC):
                 "data": [
                     {
                         "x": list(
-                            self.df_fertility_rates.dropna(
-                                axis="columns", how="all"
-                            ).columns[4:]
+                            self.df_fertility_rates.loc[
+                                self.df_fertility_rates["Country Name"] == x
+                            ]
+                            .dropna(axis="columns", how="all")
+                            .columns[4:]
                         ),
                         "y": list(
                             self.df_fertility_rates.loc[
@@ -168,9 +147,11 @@ class BirthIndicators(ViewABC):
                 "data": [
                     {
                         "x": list(
-                            self.df_life_expectancy.dropna(
-                                axis="columns", how="all"
-                            ).columns[4:]
+                            self.df_life_expectancy.loc[
+                                self.df_life_expectancy["Country Name"] == x
+                            ]
+                            .dropna(axis="columns", how="all")
+                            .columns[4:]
                         ),
                         "y": list(
                             self.df_life_expectancy.loc[
@@ -193,9 +174,11 @@ class BirthIndicators(ViewABC):
                 + [
                     {
                         "x": list(
-                            self.df_life_expectancy.dropna(
-                                axis="columns", how="all"
-                            ).columns[4:]
+                            self.df_life_expectancy.loc[
+                                self.df_life_expectancy["Country Name"] == x
+                            ]
+                            .dropna(axis="columns", how="all")
+                            .columns[4:]
                         ),
                         "y": list(
                             self.df_life_expectancy.loc[
@@ -218,9 +201,11 @@ class BirthIndicators(ViewABC):
                 + [
                     {
                         "x": list(
-                            self.df_life_expectancy.dropna(
-                                axis="columns", how="all"
-                            ).columns[4:]
+                            self.df_life_expectancy.loc[
+                                self.df_life_expectancy["Country Name"] == x
+                            ]
+                            .dropna(axis="columns", how="all")
+                            .columns[4:]
                         ),
                         "y": list(
                             self.df_life_expectancy.loc[
@@ -250,9 +235,11 @@ class BirthIndicators(ViewABC):
                 "data": [
                     {
                         "x": list(
-                            self.df_sex_ratio.dropna(axis="columns", how="all").columns[
-                                4:
+                            self.df_sex_ratio.loc[
+                                self.df_sex_ratio["Country Name"] == x
                             ]
+                            .dropna(axis="columns", how="all")
+                            .columns[4:]
                         ),
                         "y": list(
                             self.df_sex_ratio.loc[

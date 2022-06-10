@@ -7,23 +7,19 @@ import plotly.colors
 from webviz_config.webviz_plugin_subclasses import ViewABC, ViewElementABC
 import webviz_core_components as wcc
 
-from ..._element_ids import ElementIds
+from ..._plugin_ids import PluginIds
 from ..._utils import create_figure
-
-
-class Graph(ViewElementABC):
-    def __init__(self) -> None:
-        super().__init__()
-
-    def inner_layout(self) -> Union[str, Type[Component]]:
-        return wcc.Graph(
-            id=self.register_component_unique_id(ElementIds.GRAPH),
-            config={"displayModeBar": False},
-            style={"height": "43vh", "min-height": "300px"},
-        )
+from ...view_elements import Graph
 
 
 class MortalityRatesAndNumberOfDeaths(ViewABC):
+    class Ids:
+        DEATH_RATE = "death-rate"
+        MORTALITY_RATE_ADULTS = "mortality-rate-adults"
+        MORTALITY_RATE_INFANTS = "mortality-rate-infants"
+        MORTALITY_RATE_NEONATAL = "mortality-rate-neonatal"
+        MORTALITY_RATE_UNDER_FIVE = "mortality-rate-under-five"
+
     def __init__(self, population_df: pd.DataFrame) -> None:
         super().__init__("Mortality rates and number of deaths")
 
@@ -54,76 +50,74 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
         column = self.add_column()
 
         column.add_view_element(
-            Graph(),
-            ElementIds.BirthDeathFertility.MortalityRatesAndNumberOfDeaths.DEATH_RATE,
+            Graph("43vh"),
+            MortalityRatesAndNumberOfDeaths.Ids.DEATH_RATE,
         )
 
         first_row = column.make_row()
         first_row.add_view_element(
-            Graph(),
-            ElementIds.BirthDeathFertility.MortalityRatesAndNumberOfDeaths.MORTALITY_RATE_ADULTS,
+            Graph("43vh"),
+            MortalityRatesAndNumberOfDeaths.Ids.MORTALITY_RATE_ADULTS,
         )
         first_row.add_view_element(
-            Graph(),
-            ElementIds.BirthDeathFertility.MortalityRatesAndNumberOfDeaths.MORTALITY_RATE_INFANTS,
+            Graph("43vh"),
+            MortalityRatesAndNumberOfDeaths.Ids.MORTALITY_RATE_INFANTS,
         )
 
         second_row = column.make_row()
         second_row.add_view_element(
-            Graph(),
-            ElementIds.BirthDeathFertility.MortalityRatesAndNumberOfDeaths.MORTALITY_RATE_NEONATAL,
+            Graph("43vh"),
+            MortalityRatesAndNumberOfDeaths.Ids.MORTALITY_RATE_NEONATAL,
         )
         second_row.add_view_element(
-            Graph(),
-            ElementIds.BirthDeathFertility.MortalityRatesAndNumberOfDeaths.MORTALITY_RATE_UNDER_FIVE,
+            Graph("43vh"),
+            MortalityRatesAndNumberOfDeaths.Ids.MORTALITY_RATE_UNDER_FIVE,
         )
 
     def set_callbacks(self) -> None:
         @callback(
             Output(
-                self.view_element(
-                    ElementIds.BirthDeathFertility.MortalityRatesAndNumberOfDeaths.DEATH_RATE
-                )
-                .component_unique_id(ElementIds.GRAPH)
+                self.view_element(MortalityRatesAndNumberOfDeaths.Ids.DEATH_RATE)
+                .component_unique_id(Graph.Ids.GRAPH)
                 .to_string(),
                 "figure",
             ),
             Output(
                 self.view_element(
-                    ElementIds.BirthDeathFertility.MortalityRatesAndNumberOfDeaths.MORTALITY_RATE_ADULTS
+                    MortalityRatesAndNumberOfDeaths.Ids.MORTALITY_RATE_ADULTS
                 )
-                .component_unique_id(ElementIds.GRAPH)
+                .component_unique_id(Graph.Ids.GRAPH)
                 .to_string(),
                 "figure",
             ),
             Output(
                 self.view_element(
-                    ElementIds.BirthDeathFertility.MortalityRatesAndNumberOfDeaths.MORTALITY_RATE_INFANTS
+                    MortalityRatesAndNumberOfDeaths.Ids.MORTALITY_RATE_INFANTS
                 )
-                .component_unique_id(ElementIds.GRAPH)
+                .component_unique_id(Graph.Ids.GRAPH)
                 .to_string(),
                 "figure",
             ),
             Output(
                 self.view_element(
-                    ElementIds.BirthDeathFertility.MortalityRatesAndNumberOfDeaths.MORTALITY_RATE_NEONATAL
+                    MortalityRatesAndNumberOfDeaths.Ids.MORTALITY_RATE_NEONATAL
                 )
-                .component_unique_id(ElementIds.GRAPH)
+                .component_unique_id(Graph.Ids.GRAPH)
                 .to_string(),
                 "figure",
             ),
             Output(
                 self.view_element(
-                    ElementIds.BirthDeathFertility.MortalityRatesAndNumberOfDeaths.MORTALITY_RATE_UNDER_FIVE
+                    MortalityRatesAndNumberOfDeaths.Ids.MORTALITY_RATE_UNDER_FIVE
                 )
-                .component_unique_id(ElementIds.GRAPH)
+                .component_unique_id(Graph.Ids.GRAPH)
                 .to_string(),
                 "figure",
             ),
             Input(
-                self.get_store_unique_id(ElementIds.Stores.SELECTED_COUNTRIES), "data"
+                self.get_store_unique_id(PluginIds.Stores.SELECTED_COUNTRIES), "data"
             ),
-            Input(self.get_store_unique_id(ElementIds.Stores.SELECTED_YEARS), "data"),
+            Input(self.get_store_unique_id(PluginIds.Stores.SELECTED_YEARS), "data"),
         )
         def _update_plots(
             countries: List[str], years: List[int]
@@ -132,9 +126,11 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
                 "data": [
                     {
                         "x": list(
-                            self.df_death_rates.dropna(
-                                axis="columns", how="all"
-                            ).columns[4:]
+                            self.df_death_rates.loc[
+                                self.df_death_rates["Country Name"] == x
+                            ]
+                            .dropna(axis="columns", how="all")
+                            .columns[4:]
                         ),
                         "y": list(
                             self.df_death_rates.loc[
@@ -161,9 +157,11 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
                 "data": [
                     {
                         "x": list(
-                            self.df_mortality_rates_adults.dropna(
-                                axis="columns", how="all"
-                            ).columns[4:]
+                            self.df_mortality_rates_adults.loc[
+                                self.df_mortality_rates_adults["Country Name"] == x
+                            ]
+                            .dropna(axis="columns", how="all")
+                            .columns[4:]
                         ),
                         "y": list(
                             self.df_mortality_rates_adults.loc[
@@ -186,9 +184,11 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
                 + [
                     {
                         "x": list(
-                            self.df_mortality_rates_adults.dropna(
-                                axis="columns", how="all"
-                            ).columns[4:]
+                            self.df_mortality_rates_adults.loc[
+                                self.df_mortality_rates_adults["Country Name"] == x
+                            ]
+                            .dropna(axis="columns", how="all")
+                            .columns[4:]
                         ),
                         "y": list(
                             self.df_mortality_rates_adults.loc[
@@ -218,9 +218,11 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
                 "data": [
                     {
                         "x": list(
-                            self.df_mortality_rates_infants.dropna(
-                                axis="columns", how="all"
-                            ).columns[4:]
+                            self.df_mortality_rates_infants.loc[
+                                self.df_mortality_rates_infants["Country Name"] == x
+                            ]
+                            .dropna(axis="columns", how="all")
+                            .columns[4:]
                         ),
                         "y": list(
                             self.df_mortality_rates_infants.loc[
@@ -243,9 +245,11 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
                 + [
                     {
                         "x": list(
-                            self.df_mortality_rates_infants.dropna(
-                                axis="columns", how="all"
-                            ).columns[4:]
+                            self.df_mortality_rates_infants.loc[
+                                self.df_mortality_rates_infants["Country Name"] == x
+                            ]
+                            .dropna(axis="columns", how="all")
+                            .columns[4:]
                         ),
                         "y": list(
                             self.df_mortality_rates_infants.loc[
@@ -268,9 +272,11 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
                 + [
                     {
                         "x": list(
-                            self.df_mortality_rates_infants.dropna(
-                                axis="columns", how="all"
-                            ).columns[4:]
+                            self.df_mortality_rates_infants.loc[
+                                self.df_mortality_rates_infants["Country Name"] == x
+                            ]
+                            .dropna(axis="columns", how="all")
+                            .columns[4:]
                         ),
                         "y": list(
                             self.df_mortality_rates_infants.loc[
@@ -300,9 +306,11 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
                 "data": [
                     {
                         "x": list(
-                            self.df_mortality_rates_neonatal.dropna(
-                                axis="columns", how="all"
-                            ).columns[4:]
+                            self.df_mortality_rates_neonatal.loc[
+                                self.df_mortality_rates_neonatal["Country Name"] == x
+                            ]
+                            .dropna(axis="columns", how="all")
+                            .columns[4:]
                         ),
                         "y": list(
                             self.df_mortality_rates_neonatal.loc[
@@ -327,9 +335,12 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
                 "data": [
                     {
                         "x": list(
-                            self.df_mortality_rates_under_five_years.dropna(
-                                axis="columns", how="all"
-                            ).columns[4:]
+                            self.df_mortality_rates_under_five_years.loc[
+                                self.df_mortality_rates_under_five_years["Country Name"]
+                                == x
+                            ]
+                            .dropna(axis="columns", how="all")
+                            .columns[4:]
                         ),
                         "y": list(
                             self.df_mortality_rates_under_five_years.loc[
@@ -355,9 +366,12 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
                 + [
                     {
                         "x": list(
-                            self.df_mortality_rates_under_five_years.dropna(
-                                axis="columns", how="all"
-                            ).columns[4:]
+                            self.df_mortality_rates_under_five_years.loc[
+                                self.df_mortality_rates_under_five_years["Country Name"]
+                                == x
+                            ]
+                            .dropna(axis="columns", how="all")
+                            .columns[4:]
                         ),
                         "y": list(
                             self.df_mortality_rates_under_five_years.loc[
@@ -383,9 +397,12 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
                 + [
                     {
                         "x": list(
-                            self.df_mortality_rates_under_five_years.dropna(
-                                axis="columns", how="all"
-                            ).columns[4:]
+                            self.df_mortality_rates_under_five_years.loc[
+                                self.df_mortality_rates_under_five_years["Country Name"]
+                                == x
+                            ]
+                            .dropna(axis="columns", how="all")
+                            .columns[4:]
                         ),
                         "y": list(
                             self.df_mortality_rates_under_five_years.loc[
@@ -409,7 +426,7 @@ class MortalityRatesAndNumberOfDeaths(ViewABC):
                     for i, x in enumerate(countries)
                 ],
                 "layout": {
-                    "title": "Mortality rate, infant (per 1,000 live births)",
+                    "title": "Mortality rate, under 5 years (per 1,000 live births)",
                     "xaxis": {"range": years},
                 },
             }

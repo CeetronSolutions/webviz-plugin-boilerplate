@@ -5,7 +5,7 @@ import pandas as pd
 from webviz_config import WebvizPluginABC
 from dash.development.base_component import Component
 
-from ._element_ids import ElementIds
+from ._plugin_ids import PluginIds
 from ._error import error
 from .shared_settings import Filter
 from .views import (
@@ -45,10 +45,9 @@ class PopulationAnalysis(WebvizPluginABC):
     """
 
     def __init__(self, path_to_population_data_csv_file: Path) -> None:
-        super().__init__()
+        super().__init__(stretch=True)
 
         self.error_message = ""
-
         try:
             self.population_df = pd.read_csv(path_to_population_data_csv_file)
         except PermissionError:
@@ -76,38 +75,38 @@ class PopulationAnalysis(WebvizPluginABC):
             return
 
         self.add_store(
-            ElementIds.Stores.SELECTED_COUNTRIES, WebvizPluginABC.StorageType.SESSION
+            PluginIds.Stores.SELECTED_COUNTRIES, WebvizPluginABC.StorageType.SESSION
         )
 
         self.add_store(
-            ElementIds.Stores.SELECTED_YEARS, WebvizPluginABC.StorageType.SESSION
+            PluginIds.Stores.SELECTED_YEARS, WebvizPluginABC.StorageType.SESSION
         )
 
         self.add_shared_settings_group(
             Filter(self.population_df),
-            ElementIds.SharedSettings.Filter.ID,
+            PluginIds.SharedSettings.Filter.ID,
         )
 
         self.add_view(
             BirthIndicators(self.population_df),
-            ElementIds.BirthDeathFertility.BirthIndicators.ID,
-            ElementIds.BirthDeathFertility.NAME,
+            PluginIds.BirthDeathFertility.BirthIndicators.ID,
+            PluginIds.BirthDeathFertility.NAME,
         )
         self.add_view(
             MortalityRatesAndNumberOfDeaths(self.population_df),
-            ElementIds.BirthDeathFertility.MortalityRatesAndNumberOfDeaths.ID,
-            ElementIds.BirthDeathFertility.NAME,
+            PluginIds.BirthDeathFertility.MortalityRatesAndNumberOfDeaths.ID,
+            PluginIds.BirthDeathFertility.NAME,
         )
 
         self.add_view(
             PopulationByAges(self.population_df),
-            ElementIds.Population.ByAges.ID,
-            ElementIds.Population.NAME,
+            PluginIds.Population.ByAges.ID,
+            PluginIds.Population.NAME,
         )
         self.add_view(
             PopulationIndicators(self.population_df),
-            ElementIds.Population.Indicators.ID,
-            ElementIds.Population.NAME,
+            PluginIds.Population.Indicators.ID,
+            PluginIds.Population.NAME,
         )
 
     @property

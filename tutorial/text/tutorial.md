@@ -45,8 +45,6 @@ Since we don't want to blow up our plugin too much (and not all indicators come 
         -   Population (male/female/total)
         -   Rural and urban population (absolute/relative/annual growth)
 
-The CSV file from the World Bank was adjusted accordingly by removing all unnecessary data.
-
 ## Sketching the plugin
 
 After having analyzed the data source, let's start sketching our plugin. We decided to look at a certain set of indicators and we grouped them together. We have two main categories, each of them having two sub categories. In WLF, these categories of indicators can be regarded as different views on the data source. That's why we are going to implement two view groups and four views.

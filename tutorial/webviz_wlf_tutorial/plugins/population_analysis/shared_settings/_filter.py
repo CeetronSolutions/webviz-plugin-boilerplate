@@ -6,7 +6,7 @@ import pandas as pd
 from webviz_config.webviz_plugin_subclasses import SettingsGroupABC
 import webviz_core_components as wcc
 
-from .._element_ids import ElementIds
+from .._plugin_ids import PluginIds
 
 
 class Filter(SettingsGroupABC):
@@ -49,7 +49,7 @@ class Filter(SettingsGroupABC):
     def set_callbacks(self) -> None:
         @callback(
             Output(
-                self.get_store_unique_id(ElementIds.Stores.SELECTED_COUNTRIES), "data"
+                self.get_store_unique_id(PluginIds.Stores.SELECTED_COUNTRIES), "data"
             ),
             Input(
                 self.component_unique_id(Filter.Ids.COUNTRY_SELECT).to_string(),
@@ -60,7 +60,7 @@ class Filter(SettingsGroupABC):
             return countries
 
         @callback(
-            Output(self.get_store_unique_id(ElementIds.Stores.SELECTED_YEARS), "data"),
+            Output(self.get_store_unique_id(PluginIds.Stores.SELECTED_YEARS), "data"),
             Input(
                 self.component_unique_id(Filter.Ids.YEAR_SLIDER).to_string(),
                 "value",
