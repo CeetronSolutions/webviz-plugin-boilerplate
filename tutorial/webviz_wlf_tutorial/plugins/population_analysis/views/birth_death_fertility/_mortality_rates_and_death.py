@@ -1,14 +1,11 @@
-from typing import List, Tuple, Type, Union
+from typing import List, Tuple
 
 from dash import callback, Input, Output
-from dash.development.base_component import Component
 import pandas as pd
 import plotly.colors
-from webviz_config.webviz_plugin_subclasses import ViewABC, ViewElementABC
-import webviz_core_components as wcc
+from webviz_config.webviz_plugin_subclasses import ViewABC
 
 from ..._plugin_ids import PluginIds
-from ..._utils import create_figure
 from ...view_elements import Graph
 
 

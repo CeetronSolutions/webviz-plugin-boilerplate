@@ -4,23 +4,16 @@ class PluginIds:
         SELECTED_YEARS = "selected-years"
 
     class SharedSettings:
-        class Filter:
-            ID = "filter"
+        FILTER = "filter"
 
     class BirthDeathFertility:
-        NAME = "Birth, death and fertility"
+        GROUP_NAME = "Birth, death and fertility"
 
-        class BirthIndicators:
-            ID = "birth-indicators"
-
-        class MortalityRatesAndNumberOfDeaths:
-            ID = "mortality-death-rates"
+        BIRTH_INDICATORS = "birth-indicators"
+        MORTALITY_RATES_AND_NUMBER_OF_DEATHS = "mortality-death-rates"
 
     class Population:
-        NAME = "Population"
+        GROUP_NAME = "Population"
 
-        class ByAges:
-            ID = "by-ages"
-
-        class Indicators:
-            ID = "indicators"
+        BY_AGES = "by-ages"
+        INDICATORS = "indicators"

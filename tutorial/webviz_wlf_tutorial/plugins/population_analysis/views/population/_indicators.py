@@ -7,7 +7,6 @@ import plotly.colors
 from webviz_config.webviz_plugin_subclasses import (
     SettingsGroupABC,
     ViewABC,
-    ViewElementABC,
 )
 import webviz_core_components as wcc
 

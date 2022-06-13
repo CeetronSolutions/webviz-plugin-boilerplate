@@ -17,8 +17,6 @@ class BirthIndicators(ViewABC):
         FERTILITY_RATES = "fertility-rates"
         LIFE_EXPECTANCY = "life-expectancy"
         SEX_RATIO = "sex-ratio"
-        SETTINGS = "settings"
-        CHART_TYPE = "chart-type"
 
     def __init__(self, population_df: pd.DataFrame) -> None:
         super().__init__("Birth indicators")
