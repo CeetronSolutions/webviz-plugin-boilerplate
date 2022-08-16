@@ -7,16 +7,19 @@ from dash.development.base_component import Component
 
 from ._plugin_ids import PluginIds
 from ._error import error
-from .shared_settings import Filter
-from .views import (
-    BirthIndicators,
+from ._shared_settings import Filter
+from ._views._birth_death_fertility._birth_indicators import BirthIndicators
+from ._views._birth_death_fertility._mortality_rates_and_death import (
     MortalityRatesAndNumberOfDeaths,
-    PopulationByAges,
-    PopulationIndicators,
 )
-from .view_elements import Graph
-from .views.population._by_ages import ViewSettings as PopulationByAgesViewSettings
-from .views.population._indicators import (
+from ._views._population._by_ages import PopulationByAges
+from ._views._population._indicators import PopulationIndicators
+
+from ._shared_view_elements._graph import Graph
+from ._views._population._by_ages._view import (
+    ViewSettings as PopulationByAgesViewSettings,
+)
+from ._views._population._indicators._settings import (
     ViewSettings as PopulationIndicatorsViewSettings,
 )
 

@@ -6,52 +6,12 @@ import math
 import re
 import pandas as pd
 import plotly.colors
-from webviz_config.webviz_plugin_subclasses import SettingsGroupABC, ViewABC
+from webviz_config.webviz_plugin_subclasses import ViewABC
 import webviz_core_components as wcc
 
-from ..._plugin_ids import PluginIds
+from ._settings import ViewSettings
 
-
-class ViewSettings(SettingsGroupABC):
-    class Ids:
-        VIEW_BY = "view-by"
-        VALUES = "values"
-        GENDER = "gender"
-
-    def __init__(self) -> None:
-        super().__init__("View settings")
-
-    def layout(self) -> List[Component]:
-        return [
-            wcc.RadioItems(
-                id=self.register_component_unique_id(ViewSettings.Ids.VIEW_BY),
-                label="View by",
-                options=[
-                    {"label": "Age group", "value": "age-group"},
-                    {"label": "Country", "value": "country"},
-                ],
-                value="age-group",
-            ),
-            wcc.RadioItems(
-                id=self.register_component_unique_id(ViewSettings.Ids.VALUES),
-                label="Relative or absolute values",
-                options=[
-                    {"label": "Absolute", "value": "absolute"},
-                    {"label": "Relative", "value": "relative"},
-                ],
-                value="absolute",
-            ),
-            wcc.RadioItems(
-                id=self.register_component_unique_id(ViewSettings.Ids.GENDER),
-                label="Gender",
-                options=[
-                    {"label": "Both", "value": "both"},
-                    {"label": "Female", "value": "female"},
-                    {"label": "Male", "value": "male"},
-                ],
-                value="both",
-            ),
-        ]
+from webviz_wlf_tutorial.plugins.population_analysis._plugin_ids import PluginIds
 
 
 class PopulationByAges(ViewABC):
@@ -308,7 +268,7 @@ class PopulationByAges(ViewABC):
                                 "y": [
                                     item
                                     for t in (
-                                        zip(
+                                        zip(  # type: ignore
                                             list(
                                                 df_female.loc[
                                                     df_female["Country Name"] == country

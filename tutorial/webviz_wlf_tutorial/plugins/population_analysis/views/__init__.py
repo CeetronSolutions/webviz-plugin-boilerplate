@@ -1,2 +1,0 @@
-from .birth_death_fertility import BirthIndicators, MortalityRatesAndNumberOfDeaths
-from .population import PopulationByAges, PopulationIndicators

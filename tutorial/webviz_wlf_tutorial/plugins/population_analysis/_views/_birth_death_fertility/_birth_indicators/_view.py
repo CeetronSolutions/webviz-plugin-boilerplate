@@ -7,8 +7,10 @@ from webviz_config.webviz_plugin_subclasses import (
     ViewABC,
 )
 
-from ..._plugin_ids import PluginIds
-from ...view_elements import Graph
+from webviz_wlf_tutorial.plugins.population_analysis._plugin_ids import PluginIds
+from webviz_wlf_tutorial.plugins.population_analysis._shared_view_elements._graph import (
+    Graph,
+)
 
 
 class BirthIndicators(ViewABC):
